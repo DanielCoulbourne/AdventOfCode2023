@@ -1,5 +1,5 @@
 pub mod day1 {
-    use std::include_str;
+    use std::{include_str};
 
     pub fn solve() {
         let input: &str = include_str!(
@@ -26,9 +26,6 @@ pub mod day1 {
 
         let digits = cleaned_string
             .chars()
-            .filter(
-                |c| c.is_digit(10)
-            )
             .map(|c| c.to_string())
             .collect::<Vec<String>>();
 
@@ -43,19 +40,52 @@ pub mod day1 {
     }
 
     fn replace_number_strings(init: &str) -> String {
-        // replace isnt good enough.
-        // some of the numbers share a letter
-        // like eightwo is both 8 and 2
+        let numbers: Vec<(&str, &str)> = vec![("1", "one"), ("2", "two"), ("3", "three"), ("4", "four"), ("5", "five"), ("6", "six"), ("7", "seven"), ("8", "eight"), ("9", "nine"), ("0", "zero")];
+   
+        let haystack = init.to_string();
+        let matches = numbers
+            .iter()
+            .fold(
+                vec![],
+                |acc, (number, word)| append_matches(haystack.clone(), acc, (number, word))
+            );
+
+        let number_string = matches
+            .iter()
+            .fold(
+                String::new(),
+                |acc, (_, number)| {
+                    let mut result = acc.clone();
+                    let char = number.to_string();
+
+                    result.push_str(char.as_str());
+
+                    result
+                }
+            );
+
+            dbg!(&init, &number_string);
+        number_string
+    }
+
+    fn append_matches(haystack: String, acc: Vec<(usize, String)>, (number, string): (&str, &str)) -> Vec<(usize, String)> {
+        let mut new_acc = acc.clone();
+
+        let word_matches = haystack.match_indices(string).collect::<Vec<(usize, &str)>>();
+        let number_matches = haystack.match_indices(number).collect::<Vec<(usize, &str)>>();
+
+        new_acc.extend(
+            word_matches.into_iter().map(|(index, _)| (index, number.to_string()))
+        );
         
-        init.replace("one", "1")
-            .replace("two", "2")
-            .replace("three", "3")
-            .replace("four", "4")
-            .replace("five", "5")
-            .replace("six", "6")
-            .replace("seven", "7")
-            .replace("eight", "8")
-            .replace("nine", "9")
-            // .replace("zero", "0") --- the instructions dont include zero
+        new_acc.extend(
+            number_matches.into_iter().map(|(index, _)| (index, number.to_string()))
+        );
+
+        new_acc.sort_by(
+            |(a_index, _), (b_index, _)| a_index.cmp(b_index)
+        );
+
+        new_acc
     }
 }
