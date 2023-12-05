@@ -1,5 +1,7 @@
+#![allow(dead_code)]
+
 pub mod day1 {
-    use std::{include_str};
+    use std::include_str;
 
     pub fn solve() {
         let input: &str = include_str!(
@@ -34,8 +36,6 @@ pub mod day1 {
 
         let concatenated_first_last = format!("{}{}", first, last);
 
-        println!("{} -> {} -> {}", string, cleaned_string, concatenated_first_last);
-
         concatenated_first_last.parse::<i32>().unwrap()
     }
 
@@ -64,7 +64,6 @@ pub mod day1 {
                 }
             );
 
-            dbg!(&init, &number_string);
         number_string
     }
 
